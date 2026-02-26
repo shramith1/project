@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Voice Assistant</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#141e30,#243b55);
+  font-family:Segoe UI;
+  color:white;
+}
+
+.container{
+  text-align:center;
+  background:rgba(255,255,255,0.08);
+  padding:40px;
+  width:400px;
+  border-radius:20px;
+  backdrop-filter:blur(15px);
+}
+
+button{
+  padding:15px 30px;
+  font-size:18px;
+  border:none;
+  border-radius:50px;
+  cursor:pointer;
+  background:linear-gradient(45deg,#00f260,#0575e6);
+  color:white;
+  font-weight:bold;
+}
+
+#output{
+  margin-top:20px;
+  padding:15px;
+  background:rgba(255,255,255,0.1);
+  border-radius:10px;
+  min-height:50px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>🎤 Voice Assistant</h1>
+  <button id="listenBtn">Start Listening</button>
+  <div id="output">Click the button and speak...</div>
+</div>
+
+<script>
+const output = document.getElementById("output");
+const listenBtn = document.getElementById("listenBtn");
+
+function speak(text){
+  const speech = new SpeechSynthesisUtterance(text);
+  speech.lang = "en-US";
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(speech);
+}
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if(!SpeechRecognition){
+  output.innerText = "Use Google Chrome.";
+  listenBtn.disabled = true;
+}else{
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = "en-US";
+
+  listenBtn.onclick = () => {
+    recognition.start();
+    output.innerText = "Listening...";
+  };
+
+  recognition.onresult = function(event){
+    let transcript = event.results[0][0].transcript.toLowerCase().trim();
+    output.innerText = "You said: " + transcript;
+
+    if(transcript.includes("youtube")){
+      speak("Opening YouTube");
+      setTimeout(()=>{
+        window.location.href = "https://www.youtube.com";
+      },1000);
+    }
+
+    else if(transcript.includes("google")){
+      speak("Opening Google");
+      setTimeout(()=>{
+        window.location.href = "https://www.google.com";
+      },1000);
+    }
+
+    else if(transcript.includes("time")){
+      let time = new Date().toLocaleTimeString();
+      speak("The time is " + time);
+    }
+
+    else{
+      speak("Command not recognized.");
+    }
+  };
+
+  recognition.onerror = function(event){
+    output.innerText = "Error: " + event.error;
+  };
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Resume Screening System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right,#141e30,#243b55);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    margin:0;
+}
+
+.container{
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    width:450px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+    text-align:center;
+}
+
+h2{
+    margin-bottom:20px;
+}
+
+input{
+    margin:15px 0;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    background:#243b55;
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+button:hover{
+    background:#141e30;
+}
+
+.result{
+    margin-top:20px;
+    padding:15px;
+    border-radius:6px;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Resume Screening System</h2>
+
+    <!-- Upload Resume -->
+    <input type="file" id="resumeFile" accept=".txt">
+
+    <button onclick="checkResume()">Check Resume</button>
+
+    <div id="output" class="result"></div>
+</div>
+
+<script>
+
+function checkResume(){
+
+    let fileInput = document.getElementById("resumeFile");
+    let output = document.getElementById("output");
+
+    if(fileInput.files.length === 0){
+        alert("Please upload a resume file.");
+        return;
+    }
+
+    let file = fileInput.files[0];
+    let reader = new FileReader();
+
+    reader.onload = function(event){
+
+        let text = event.target.result.toLowerCase();
+
+        // Condition 1: CS Degree
+        let hasDegree = text.includes("computer science") ||
+                        text.includes("bsc cs") ||
+                        text.includes("b.tech cs") ||
+                        text.includes("cs degree");
+
+        // Condition 2: 2+ Years Python Experience
+        let hasPython = text.includes("python");
+        let hasExperience = text.includes("2 years") ||
+                            text.includes("two years") ||
+                            text.includes("3 years") ||
+                            text.includes("4 years") ||
+                            text.includes("5 years");
+
+        if(hasDegree && hasPython && hasExperience){
+            output.style.background = "#d4edda";
+            output.style.color = "#155724";
+            output.innerHTML = "✅ Resume Selected<br>Candidate meets all requirements.";
+        }
+        else{
+            output.style.background = "#f8d7da";
+            output.style.color = "#721c24";
+            output.innerHTML = "❌ Resume Rejected<br>Requirements not satisfied.";
+        }
+
+    };
+
+    reader.readAsText(file);
+}
+
+</script>
+
+</body>
+</html>
